@@ -1,0 +1,12 @@
+{% for host in groups['kube-node'] %}
+{
+	"apiVersion": "v1",
+	"kind": "Node",
+	"metadata": {
+		"name": "{{ host }}"
+	},
+	"spec": {
+		"externalID": "{{ host }}"
+	}
+}
+{% endfor %}

@@ -1,0 +1,27 @@
+---
+- name: install Docker engine
+  package: name=docker state=present
+
+- name: enable and start Docker service
+  service: name=docker enabled=yes state=started
+
+- name: install iptables
+  package: name=iptables state=present
+
+- name: install kubernetes
+  package: name=kubernetes state=present
+
+- name: build hosts file
+  template:
+          src=hosts.j2
+          dest=/etc/hosts
+          owner=root
+          group=root
+          mode=0644
+          backup=yes
+
+- name: copy kubernetes config file
+  copy: src=config dest=/etc/kubernetes/config
+
+- name: stop firewalld
+  service: name=firewalld enabled=no state=stopped
