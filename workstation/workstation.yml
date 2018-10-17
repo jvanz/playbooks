@@ -1,0 +1,33 @@
+---
+- name: install the workstation environment
+  hosts: workstation
+  become: yes
+
+  tasks:
+          - name: install zypper packages
+            zypper: name={{item}} state=latest
+            when: ansible_distribution == "openSUSE Leap"
+            with_items:
+                    - autoconf
+                    - automake
+                    - ctags
+                    - curl
+                    - flatpak
+                    - git-core
+                    - git-email
+                    - gcc
+                    - gdb
+                    - htop
+                    - make
+                    - meson
+                    - python-pip
+                    - qemu
+                    - strace
+                    - tmux
+                    - unzip
+                    - valgrind
+                    - vim
+                    - virt-manager
+                    - wget
+
+
