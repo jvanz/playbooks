@@ -57,5 +57,15 @@
                     path: '{{ home }}/.bashrc'
                     line:  'source {{ home }}/dotfiles/.bashrc'
 
+          - name: install python pip packages
+            become: no
+            pip:
+                    state: latest
+                    name: "{{ item }}"
+                    extra_args: --user
+                    executable: pip3
+            with_items:
+                    - meson
+
 
 
