@@ -13,16 +13,21 @@
             with_items:
                     - autoconf
                     - automake
+                    - clang
                     - ctags
                     - curl
+                    - doxygen
                     - flatpak
+                    - gcc
+                    - gcc-c++
+                    - gdb
                     - git-core
                     - git-email
-                    - gcc
-                    - gdb
+                    - go
                     - htop
                     - make
                     - meson
+                    - ninja
                     - python-pip
                     - qemu
                     - strace
