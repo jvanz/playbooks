@@ -54,6 +54,7 @@
                     owner: '{{ user }}'
             with_items:
                     - { src: '.vim', dest: '.vim' }
+                    - { src: 'tmux/.tmux.conf', dest: '.tmux.conf' }
                     - { src: '.gitconfig', dest: '.gitconfig' }
 
           - name: update bashrc
