@@ -2,6 +2,9 @@
 - name: install the workstation environment
   hosts: workstation
   become: yes
+  vars:
+          home: "{{ lookup('env', 'HOME') }}"
+          user: "{{ lookup('env', 'USER') }}"
 
   tasks:
           - name: install zypper packages
@@ -29,5 +32,30 @@
                     - vim
                     - virt-manager
                     - wget
+
+          - name: clone the dotfiles repository
+            git:
+                    repo: 'git@github.com:jvanz/dotfiles.git'
+                    dest: '{{ home }}/dotfiles'
+            become: no
+            
+          - name: install configuration files
+            become: no
+            file:
+                    src: '{{ home }}/dotfiles/{{ item.src }}'
+                    dest: '{{ home }}/{{ item.dest }}'
+                    state: link
+                    force: yes
+                    owner: '{{ user }}'
+            with_items:
+                    - { src: '.vim', dest: '.vim' }
+                    - { src: '.gitconfig', dest: '.gitconfig' }
+
+          - name: update bashrc
+            become: no
+            lineinfile:
+                    path: '{{ home }}/.bashrc'
+                    line:  'source {{ home }}/dotfiles/.bashrc'
+
 
 
