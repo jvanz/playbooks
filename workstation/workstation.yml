@@ -37,6 +37,8 @@
                     - vim
                     - virt-manager
                     - wget
+                    - perl-Net-SMTP-SSL
+                    - perl-Authen-SASL
 
           - name: clone the dotfiles repository
             git:
@@ -72,6 +74,3 @@
                     executable: pip3
             with_items:
                     - meson
-
-
-
