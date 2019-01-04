@@ -50,3 +50,10 @@
                     path: '{{ user_home }}/.vim/vimrc'
                     regexp: "Plug '"
                     replace: "Plug 'git@github.com:"
+
+          - name: create a link to tmux.conf file
+            file:
+                src: '{{ user_home }}/dotfiles/.tmux.conf'
+                dest: '{{ user_home }}/.tmux.conf'
+                state: link
+
