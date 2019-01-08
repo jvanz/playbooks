@@ -1,0 +1,29 @@
+---
+- name: prepare salt minions
+  hosts: salt-minion
+
+  tasks:
+          - debug:
+                  msg: "Target distribution: {{ ansible_distribution }}"
+
+          - name: install salt packages
+            zypper: name={{item}} state=latest
+            when: ansible_distribution == "SLES"
+            with_items:
+                    - salt
+                    - salt-minion
+
+          - name: configure salt master address
+            lineinfile:
+                path: '/etc/salt/minion'
+                line:  'master: {{ salt_master }}'
+
+          - name: enable salt minion service
+            service:
+                name: salt-minion
+                enabled: yes
+
+          - name: restart salt minion
+            service:
+                name: salt-minion
+                state: restarted
