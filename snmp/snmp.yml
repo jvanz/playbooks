@@ -1,0 +1,47 @@
+---
+- name: Setup a SNMP test enviroment
+  hosts: snmp
+  become: no
+
+  tasks:
+          - debug:
+                  msg: "Target distribution: {{ ansible_distribution }}"
+          - debug:
+                  msg: "Target distribution: {{ ansible_facts['distribution_major_version'] }}"
+
+          - name: Install SNMP package
+            zypper: name={{item}} state=latest
+            when: ansible_distribution == "SLES"
+            with_items:
+                    - net-snmp
+
+          - name: Configure smptrapd daemon which will receive the forwarded traps
+            when: snmp_role == "master"
+            blockinfile:
+                path: '/etc/snmp/snmptrapd.conf'
+                block:  |
+                        authCommunity log public
+                        format2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q)\n%v\n Uptime: %#T\n%v\n
+
+          - name: Configure snmptrapd which will forward the traps
+            when: snmp_role == "trap_daemon"
+            blockinfile:
+                path: '/etc/snmp/snmptrapd.conf'
+                block:  |
+                        authCommunity log,net public
+                        forward default germ85.suse.cz
+                        format2 %.4y-%.2m-%.2l %.2h:%.2j:%.2k %B [%b] (via %A [%a]): %N\n\t%W Trap (%q)\n%v\n Uptime: %#T\n%v\n
+
+          - name: Start the SNMP daemon
+            when: 
+                - snmp_role == "device"
+            service:
+                name: snmpd
+                state: restarted
+
+          - name: Start the SNMP trap daemon
+            when: 
+                - snmp_role == "trap_daemon" or snmp_role == "master"
+            service:
+                name: snmptrapd
+                state: restarted
