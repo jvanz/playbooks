@@ -15,6 +15,13 @@
             with_items:
                     - net-snmp
 
+          - name: Make sure the snmptrapd.conf file is there
+            when: 
+                - snmp_role == "trap_daemon" or snmp_role == "master"
+            file:
+                path: '/etc/snmp/snmptrapd.conf'
+                state: touch
+
           - name: Configure smptrapd daemon which will receive the forwarded traps
             when: snmp_role == "master"
             blockinfile:
