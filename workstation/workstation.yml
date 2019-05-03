@@ -28,17 +28,18 @@
                     - make
                     - meson
                     - ninja
+                    - perl-Authen-SASL
+                    - perl-Net-SMTP-SSL
                     - python-pip
                     - qemu
                     - strace
+                    - taskwarrior
                     - tmux
                     - unzip
                     - valgrind
                     - vim
                     - virt-manager
                     - wget
-                    - perl-Net-SMTP-SSL
-                    - perl-Authen-SASL
 
           - name: clone the dotfiles repository
             git:
@@ -74,3 +75,4 @@
                     executable: pip3
             with_items:
                     - meson
+                    - bugwarrior
