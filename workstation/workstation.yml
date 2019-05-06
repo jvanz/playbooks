@@ -7,6 +7,10 @@
           user: "{{ lookup('env', 'USER') }}"
 
   tasks:
+          - name: install the python-xml lib needed to ansible works
+            command: zypper install -y python-xml
+            when: ansible_distribution == "openSUSE Leap" or ansible_distribution == "openSUSE Tumbleweed"
+
           - name: install zypper packages
             zypper: name={{item}} state=latest
             when: ansible_distribution == "openSUSE Leap"
