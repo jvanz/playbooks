@@ -57,7 +57,7 @@
                     repo: 'git@gitlab.com:jvanz/task.git'
                     dest: '{{ home }}/.task'
             become: no
-            
+
           - name: install configuration files
             become: no
             file:
@@ -70,6 +70,7 @@
                     - { src: '.vim', dest: '.vim' }
                     - { src: '.tmux.conf', dest: '.tmux.conf' }
                     - { src: '.gitconfig', dest: '.gitconfig' }
+                    - { src: 'taskrc', dest: '.taskrc' }
 
           - name: update bashrc
             become: no
