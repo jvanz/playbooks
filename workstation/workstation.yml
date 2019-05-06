@@ -51,6 +51,12 @@
                     repo: 'git@github.com:jvanz/dotfiles.git'
                     dest: '{{ home }}/dotfiles'
             become: no
+
+          - name: clone the task repository
+            git:
+                    repo: 'git@gitlab.com:jvanz/task.git'
+                    dest: '{{ home }}/.task'
+            become: no
             
           - name: install configuration files
             become: no
