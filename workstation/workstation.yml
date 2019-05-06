@@ -31,6 +31,7 @@
                     - htop
                     - make
                     - meson
+                    - neomutt
                     - ninja
                     - perl-Authen-SASL
                     - perl-Net-SMTP-SSL
