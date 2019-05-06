@@ -13,7 +13,7 @@
 
           - name: install zypper packages
             zypper: name={{item}} state=latest
-            when: ansible_distribution == "openSUSE Leap"
+            when: ansible_distribution == "openSUSE Leap" or ansible_distribution == "openSUSE Tumbleweed"
             with_items:
                     - autoconf
                     - automake
