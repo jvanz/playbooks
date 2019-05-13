@@ -4,31 +4,30 @@
 
   tasks:
 
-      - name: update all packages
-        zypper: 
-            name='*'
-            state=latest
-
-      - name: install common packages
-        zypper: 
-            name='jq'
-            state=latest
-
       - name: get SLES register status
-        shell: SUSEConnect --status | jq '.[] | select(.identifier=="SLES") | .subscription_status' | tr -d \"
+        shell: SUSEConnect --status-text | sed -n '/SLES/,14p' | sed -n '/Status/p' | tr " " "\n" | tail -1
         register: regstatus
+
+      - name: clean the licenses
+        command: SUSEConnect --cleanup
+        when: regstatus.stdout != "ACTIVE"
 
       - name: register node
         command: SUSEConnect -r {{SLES12SP3_regcode}}
         when: regstatus.stdout != "ACTIVE"
 
       - name: get SES register status
-        shell: SUSEConnect --status | jq '.[] | select(.identifier=="ses") | .subscription_status' | tr -d \"
+        shell: SUSEConnect --status-text | sed -n '/ses/,14p' | sed -n '/Status/p' | tr " " "\n" | tail -1
         register: regstatus
         
       - name: register SES extension
         command: SUSEConnect -p ses/5/x86_64 -r {{SES5_regcode}}
         when: regstatus.stdout != "ACTIVE"
+
+      - name: update all packages
+        zypper: 
+            name='*'
+            state=latest
         
       - name: enable and start NTP service
         systemd:
@@ -84,12 +83,25 @@
             state=latest
         when: ses_role == "master"
 
+      - name: build deepsea list
+        set_fact:
+            deepsea_minions: |
+                {% set minions = [] %}
+                {% for host in hostvars -%}
+                    {% if hostvars[host].ses_role == "minion" -%}
+                        {{ minions.append(host) }}
+                    {%- endif %}
+                {%- endfor %}
+                {{ minions }}
+
+      - debug: msg={{deepsea_minions}}
+
       - name: configure deepsea minions target
         lineinfile:
             path: /srv/pillar/ceph/deepsea_minions.sls
             regexp: '^deepsea_minions:'
             insertafter: '^#deepsea_minions:'
-            line: "deepsea_minions: \"*\""
+            line: "deepsea_minions: '*'"
         when: ses_role == "master"
 
       - name: configure deepsea master target
@@ -103,6 +115,24 @@
         command: salt-run state.orch ceph.stage.prep
         when: ses_role == "master"
 
+      - name: generate the profile proposal
+        command: salt-run proposal.populate ssd-spinner=True nvme-ssd=True nvme-spinner=True
+        when: ses_role == "master"
+
       - name: run discovery deepsea stage
         command: salt-run state.orch ceph.stage.discovery
+        when: ses_role == "master"
+
+      - name: build policy file
+        template:
+            src: ./templates/policy.cfg.j2
+            dest: /srv/pillar/ceph/proposals/policy.cfg
+        when: ses_role == "master"
+
+      - name: run configure deepsea stage
+        command: salt-run state.orch ceph.stage.configure
+        when: ses_role == "master"
+
+      - name: run deploy deepsea stage
+        command: salt-run state.orch ceph.stage.deploy
         when: ses_role == "master"
