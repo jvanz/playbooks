@@ -14,6 +14,18 @@
     path: "{{ home }}/.offlineimap"
     state: directory
 
+- name: create systemd folder
+  become: no
+  file:
+    path: "{{ home }}/.config/systemd"
+    state: directory
+
+- name: create user folder
+  become: no
+  file:
+    path: "{{ home }}/.config/systemd/user"
+    state: directory
+
 - name: copy python script used to get password and other infos
   become: no
   copy:
@@ -46,3 +58,25 @@
     src: acc.j2
     dest: "{{ home }}/.mutt/accounts/{{ item['key'] }}"
   loop: "{{ emails|dict2items }}"
+
+- name: install offlineimap-oneshot service
+  template:
+    src: "offlineimap-oneshot.service.j2"
+    dest: "{{ home }}/.config/systemd/user/offlineimap-oneshot.service"
+
+- name: install offlineimap-oneshot timer
+  template:
+    src: "offlineimap-oneshot.timer.j2"
+    dest: "{{ home }}/.config/systemd/user/offlineimap-oneshot.timer"
+
+- name: just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+    scope: user
+
+- name: Start offlineimap timer
+  systemd:
+    state: started
+    name: offlineimap-oneshot.timer
+    scope: user
+    enabled: yes
