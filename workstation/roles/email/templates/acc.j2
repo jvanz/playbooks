@@ -14,3 +14,9 @@ set ssl_force_tls = yes
 set smtp_authenticators = "login"
 set my_PW = `{{ item['value']['password'] }}`
 set smtp_pass = $my_PW
+
+{% if item['value'].get('customlines', False) %}
+{% for line in item['value']['customlines'] %}
+{{ line }}
+{% endfor%}
+{% endif%}
