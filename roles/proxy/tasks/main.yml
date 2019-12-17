@@ -1,0 +1,6 @@
+- name: install Squid
+  become: yes
+  zypper: 
+    name: squid
+    state: present
+
