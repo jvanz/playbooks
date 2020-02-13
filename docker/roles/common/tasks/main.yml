@@ -1,6 +1,0 @@
----
-- name: Install Docker engine
-  package: name=docker state=present
-
-- name: Enable and start Docker service
-  service: name=docker enabled=yes state=started

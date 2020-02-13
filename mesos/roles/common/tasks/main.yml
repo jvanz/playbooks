@@ -1,2 +1,0 @@
-- name: Copy Apache Mesos binaries
-  unarchive: src=mesos.tar dest=/
