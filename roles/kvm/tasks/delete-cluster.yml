@@ -1,0 +1,29 @@
+- name: Destroy previous workers VMs
+  become: yes
+  ignore_errors: yes
+  shell: virsh destroy 
+    --domain {{CLUSTER_PREFIX}}-worker{{item}}
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Undefine previous worker VMs
+  become: yes
+  ignore_errors: yes
+  shell: virsh undefine 
+    --domain {{CLUSTER_PREFIX}}-worker{{item}}
+    --remove-all-storage
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Destroy previous master VMs
+  become: yes
+  ignore_errors: yes
+  shell: virsh destroy 
+    --domain {{CLUSTER_PREFIX}}-master{{item}}
+  with_sequence: count={{MASTER_COUNT}} start=0
+
+- name: Undefine previous master VMs
+  become: yes
+  ignore_errors: yes
+  shell: virsh undefine 
+    --domain {{CLUSTER_PREFIX}}-master{{item}}
+    --remove-all-storage
+  with_sequence: count={{MASTER_COUNT}} start=0

@@ -1,0 +1,106 @@
+---
+- name: Copy SSH public key
+  copy:
+    src: "{{SSH_KEY_VM}}"
+    dest: /tmp/vm_ssh_key
+    mode: '600'
+
+- name: Create worker VMs disk
+  shell: virt-builder
+    --format qcow2
+    {{NODE_OS}}
+    --hostname {{CLUSTER_PREFIX}}-worker{{item}}
+    -o {{CLUSTER_PREFIX}}-worker{{item}}.qcow2
+    --root-password password:{{ROOT_PASSWORD}}
+    --ssh-inject root:file:/tmp/vm_ssh_key
+    --network
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Create VM volumes
+  become: yes
+  shell: virsh vol-create-as
+    {{VM_POOL}}
+    {{CLUSTER_PREFIX}}-worker{{item}}
+    {{WORKER_DISK_SIZE}}
+    --format qcow2
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Upload disk content to the VM volume
+  become: yes
+  shell: virsh vol-upload
+    --pool {{VM_POOL}}
+    {{CLUSTER_PREFIX}}-worker{{item}}
+    {{CLUSTER_PREFIX}}-worker{{item}}.qcow2
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Launch worker VM
+  become: yes
+  shell: virt-install 
+    --import
+    --name {{CLUSTER_PREFIX}}-worker{{item}}
+    --ram={{WORKER_MEMORY}}
+    --vcpus={{WORKER_VCPUS}}
+    --disk vol={{VM_POOL}}/{{CLUSTER_PREFIX}}-worker{{item}}
+    --boot hd,menu=on 
+    --network network={{WORKER_NETWORK}},model=virtio
+    --os-variant={{OS_VARIANT}}
+    --noautoconsole
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Removes temporary worker VM disks
+  file:
+      state: absent
+      path: "{{CLUSTER_PREFIX}}-worker{{item}}.qcow2"
+  with_sequence: count={{WORKER_COUNT}} start=0
+
+- name: Create master VMs disk
+  shell: virt-builder
+    --format qcow2
+    {{NODE_OS}}
+    --hostname {{CLUSTER_PREFIX}}-master{{item}}
+    -o {{CLUSTER_PREFIX}}-master{{item}}.qcow2
+    --root-password password:{{ROOT_PASSWORD}}
+    --network
+  with_sequence: count={{MASTER_COUNT}} start=0
+
+- name: Create master VM volumes
+  become: yes
+  shell: virsh vol-create-as
+    {{VM_POOL}}
+    {{CLUSTER_PREFIX}}-master{{item}}
+    {{MASTER_DISK_SIZE}}
+    --format qcow2
+  with_sequence: count={{MASTER_COUNT}} start=0
+
+- name: Upload disk content to the master VM volume
+  become: yes
+  shell: virsh vol-upload
+    --pool {{VM_POOL}}
+    {{CLUSTER_PREFIX}}-master{{item}}
+    {{CLUSTER_PREFIX}}-master{{item}}.qcow2
+  with_sequence: count={{MASTER_COUNT}} start=0
+
+- name: Launch master VM
+  become: yes
+  shell: virt-install 
+    --import
+    --name {{CLUSTER_PREFIX}}-master{{item}}
+    --ram={{MASTER_MEMORY}}
+    --vcpus={{MASTER_VCPUS}}
+    --disk vol={{VM_POOL}}/{{CLUSTER_PREFIX}}-master{{item}}
+    --boot hd,menu=on 
+    --network network={{MASTER_NETWORK}},model=virtio
+    --os-variant={{OS_VARIANT}}
+    --noautoconsole
+  with_sequence: count={{MASTER_COUNT}} start=0
+
+- name: Removes temporary master VM disks
+  file:
+      state: absent
+      path: "{{CLUSTER_PREFIX}}-master{{item}}.qcow2"
+  with_sequence: count={{MASTER_COUNT}} start=0
+
+- name: Delete the public ssh key
+  file:
+      state: absent
+      path: /tmp/vm_ssh_key

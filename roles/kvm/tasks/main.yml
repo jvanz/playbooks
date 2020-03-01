@@ -1,0 +1,7 @@
+---
+- import_tasks: delete-cluster.yml
+  when: RECREATE_CLUSTER | bool
+- import_tasks: create-cluster.yml
+  when: RECREATE_CLUSTER | bool
+
+- meta: refresh_inventory
