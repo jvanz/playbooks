@@ -1,0 +1,13 @@
+---
+- name: Install etcd package
+  become: yes
+  dnf:
+    name: "etcd"
+    state: latest
+
+- name: Start etcd server
+  become: yes
+  systemd:
+      name: etcd
+      state: restarted
+      enabled: yes
