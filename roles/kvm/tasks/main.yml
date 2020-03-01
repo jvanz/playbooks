@@ -4,4 +4,7 @@
 - import_tasks: create-cluster.yml
   when: RECREATE_CLUSTER | bool
 
+- pause:
+    seconds: 30
+
 - meta: refresh_inventory

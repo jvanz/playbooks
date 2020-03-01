@@ -1,21 +1,29 @@
 ---
-CLUSTER_PREFIX: kubernetes
-NODE_OS: ubuntu-18.04
-OS_VARIANT: ubuntu18.04
-ROOT_PASSWORD: root
-VM_POOL: default
 DEST_ISO_DIR: /tmp
-WORKER_COUNT: 1
-WORKER_MEMORY: 4096
-WORKER_VCPUS: 2
-WORKER_DISK_SIZE: 30
-WORKER_NETWORK: default
-
-MASTER_COUNT: 1
-MASTER_MEMORY: 4096
-MASTER_VCPUS: 2
-MASTER_DISK_SIZE: 30
-MASTER_NETWORK: default
 
 SSH_KEY_VM: /home/jvanz/.ssh/id_rsa.pub
 RECREATE_CLUSTER: true
+
+#vms:
+#    - 
+#        name: kubernetes-master
+#        count: 1
+#        memory: 4096
+#        cpus: 2
+#        disk: 30
+#        network: default
+#        node_os: fedora-30
+#        os_variant: fedora30
+#        root_password: root
+#        vm_pool: default
+#    - 
+#        name: kubernetes-worker
+#        count: 1
+#        memory: 4096
+#        cpus: 2
+#        disk: 30
+#        network: default
+#        node_os: fedora-30
+#        os_variant: fedora30
+#        root_password: root
+#        vm_pool: default
