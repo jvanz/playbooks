@@ -1,0 +1,38 @@
+---
+- name: install nginx
+  command: zypper install -y nginx
+  become: yes
+
+- name: Template a file to /etc/nginx/nginx.conf
+  become: yes
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- name: Open kubernetes master port
+  become: yes
+  command: firewall-cmd --zone=public --permanent --add-port=6443/tcp
+
+- name: Open dex ports
+  become: yes
+  command: firewall-cmd --zone=public --permanent --add-port=32000/tcp
+
+- name: Open gangway ports
+  become: yes
+  command: firewall-cmd --zone=public --permanent --add-port=32001/tcp
+
+- name: Reload firewall
+  become: yes
+  command: firewall-cmd --reload
+
+- name: Restart nginx
+  become: yes
+  systemd:
+      name: nginx
+      state: restarted
+      enabled: yes
+
