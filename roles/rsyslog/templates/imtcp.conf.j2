@@ -1,0 +1,10 @@
+## ######### Receiving Messages from Remote Hosts ##########
+$Ruleset remote
+*.* /var/log/remote.log
+$Ruleset RSYSLOG_DefaultRuleset
+
+# TCP Syslog Server:
+# provides TCP syslog reception and GSS-API (if compiled to support it)
+$ModLoad imtcp         # load module
+$InputTCPServerBindRuleset remote
+$InputTCPServerRun {{TCP_PORT}} # Starts a TCP server on selected port

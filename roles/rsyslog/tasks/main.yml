@@ -1,0 +1,30 @@
+---
+- name: Install rsyslog
+  become: yes
+  zypper:
+    name: 'rsyslog'
+    state: latest
+
+- name: Configure IMTCP
+  become: yes
+  template:
+    src: "imtcp.conf.j2"
+    dest: "/etc/rsyslog.d/imtcp.conf"
+    mode: 0600
+
+- name: Disable firewall 
+  become: yes
+  firewalld:
+    port: "{{TCP_PORT}}/tcp"
+    permanent: yes
+    zone: public
+    state: enabled
+    immediate: yes
+
+- name: enable and start rsyslog
+  become: yes
+  systemd:
+    name: rsyslog
+    state: restarted
+    enabled: yes
+
