@@ -1,14 +1,14 @@
 - name: Register SUSE Enterprise Server
   become: yes
   command: "SUSEConnect --regcode {{SLES_REGISTRATION_CODE}}"
+  when: "{{REGISTER_MACHINE}} == True"
 
-  #- name: install the python-xml lib needed to ansible works
-  #command: zypper install -y python-xml
-  #become: yes
-  #when: ansible_distribution == "openSUSE Leap" or ansible_distribution == "openSUSE Tumbleweed" or ansible_distribution == "SLES"
+- name: install the python-xml lib needed to ansible works
+  command: zypper install -y python-xml
+  become: yes
+  when: "{{REGISTER_MACHINE}} == True"
 
 - name: update all package
-  when: ansible_distribution == "openSUSE Leap" or ansible_distribution == "openSUSE Tumbleweed" or ansible_distribution == "SLES"
   become: yes
   zypper:
     name: '*'
