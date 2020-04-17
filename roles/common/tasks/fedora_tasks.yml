@@ -1,4 +1,8 @@
-- name: Upgrade all packages to the latest version
+- name: Update cache
+  dnf:
+    update_cache: yes
+
+- name: Update all packages to the latest version
   become: yes
   dnf:
     name: "*"
