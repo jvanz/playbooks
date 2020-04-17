@@ -1,4 +1,12 @@
 ---
+
+- name: Enable and start libvirtd
+  become: yes
+  systemd:
+    name: libvirtd
+    state: started
+    enabled: yes
+
 - import_tasks: delete-cluster.yml
   when: RECREATE_CLUSTER | bool
 - import_tasks: create-cluster.yml
@@ -6,5 +14,6 @@
 
 - pause:
     seconds: 30
+  when: RECREATE_CLUSTER | bool
 
 - meta: refresh_inventory
