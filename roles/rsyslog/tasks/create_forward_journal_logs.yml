@@ -1,0 +1,29 @@
+---
+- name: Create /etc/systemd/journald.conf.d/ directory
+  become: yes
+  file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Persist journald logs
+  become: yes
+  template:
+    src: "journald_storage.conf.j2"
+    dest: "/etc/systemd/journald.conf.d/persist_storage.conf"
+    mode: 0600
+
+- name: Restart systemd-journald
+  become: yes
+  systemd:
+    name: systemd-journald
+    state: restarted
+
+- name: Configure rsyslog to forward logs
+  become: yes
+  template:
+    src: "forward_journal_logs.conf.j2"
+    dest: "/etc/rsyslog.d/journal.conf"
+    mode: 0600

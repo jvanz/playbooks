@@ -5,21 +5,11 @@
     name: 'rsyslog'
     state: latest
 
-- name: Configure IMTCP
-  become: yes
-  template:
-    src: "imtcp.conf.j2"
-    dest: "/etc/rsyslog.d/imtcp.conf"
-    mode: 0600
+- import_tasks: enable_rsyslog_tcp_input.yml
+  when: ENABLE_TCP_INPUT
 
-- name: Disable firewall 
-  become: yes
-  firewalld:
-    port: "{{TCP_PORT}}/tcp"
-    permanent: yes
-    zone: public
-    state: enabled
-    immediate: yes
+- import_tasks: forward_journal_logs.yml
+  when: ENABLE_JOURNAL_FORWARD
 
 - name: enable and start rsyslog
   become: yes

@@ -1,0 +1,5 @@
+---
+
+- import_tasks: delete_journald_config.yml
+  
+- import_tasks: create_forward_journal_logs.yml

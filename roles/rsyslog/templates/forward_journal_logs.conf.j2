@@ -1,0 +1,9 @@
+## module
+*.* action(type="omfwd" 
+	target="{{LOG_SERVE}}" 
+	port="{{TCP_PORT}}"
+	protocol="tcp" 
+	action.resumeRetryCount="100"
+	queue.type="linkedList"
+	queue.size="10000")
+

@@ -1,0 +1,6 @@
+---
+- name: Delete /etc/systemd/journald.conf.d/persist_storage.conf
+  become: yes
+  file:
+    path: "/etc/systemd/journald.conf.d/persist_storage.conf"
+    state: absent

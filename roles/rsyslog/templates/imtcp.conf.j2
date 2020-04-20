@@ -3,8 +3,5 @@ $Ruleset remote
 *.* /var/log/remote.log
 $Ruleset RSYSLOG_DefaultRuleset
 
-# TCP Syslog Server:
-# provides TCP syslog reception and GSS-API (if compiled to support it)
-$ModLoad imtcp         # load module
-$InputTCPServerBindRuleset remote
-$InputTCPServerRun {{TCP_PORT}} # Starts a TCP server on selected port
+module(load="imtcp" MaxSessions="500")
+input(type="imtcp" port="{{TCP_PORT}}" Ruleset="remote")
