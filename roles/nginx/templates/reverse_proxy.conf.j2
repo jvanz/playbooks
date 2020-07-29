@@ -1,0 +1,17 @@
+upstream {{ item['name'] }} {
+{% for server in item['hosts'] %}
+    server {{ server['host'] }}:{{ server['port'] }};
+{% endfor %}
+}
+
+server {
+  listen {{ item['port'] }};
+  listen [::]:{{ item['port'] }};
+
+  server_name {{ item['server_name'] }};
+
+
+  location {{ item['path'] }} {
+      proxy_pass http://{{ item['name'] }}/;
+  }
+}

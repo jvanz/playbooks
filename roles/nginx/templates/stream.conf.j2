@@ -1,0 +1,25 @@
+stream {
+    log_format proxy '$remote_addr [$time_local] '
+                     '$protocol $status $bytes_sent $bytes_received '
+                     '$session_time "$upstream_addr"';
+
+    error_log  {{ load_balancer['stream']['error_log'] }};
+    access_log {{ load_balancer['stream']['access_log'] }};
+
+    {% for upstream in load_balancer['stream']['servers'] %}
+
+    upstream {{ upstream['name'] }} {
+    {% for server in upstream['hosts'] %}
+        server {{server['host']}}:{{server['port'] | default(upstream['port'])}} weight={{server['weight'] | default(DEFAULT_WEIGHT)}} max_fails={{server['max_fails'] | default(DEFAULT_MAX_FAILS)}} fail_timeout={{server['fail_timeout'] | default(DEFAULT_FAIL_TIMEOUT)}};
+    {% endfor %}
+    }
+
+    server {
+        listen {{upstream['port']}};
+        proxy_connect_timeout {{upstream['proxy_connect_timeout'] | default(DEFAULT_PROXY_CONNECT_TIMEOUT)}};
+        proxy_timeout {{upstream['proxy_timeout'] | default(DEFAULT_PROXY_TIMEOUT)}};
+        proxy_pass {{upstream['name']}};
+    }
+
+    {% endfor %}
+}

@@ -1,0 +1,27 @@
+---
+- name: install nginx
+  zypper: 
+    name: nginx
+    state: present
+
+- name: configure nginx.conf
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/nginx.conf"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- import_tasks: stream.yml
+  when: "load_balancer['stream']"
+
+- import_tasks: reverse_proxy.yml
+  when: " 'reverse_proxy' in load_balancer"
+
+- name: Restart nginx
+  systemd:
+      name: nginx
+      state: restarted
+      enabled: yes
+
