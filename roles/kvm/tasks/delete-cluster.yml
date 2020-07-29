@@ -1,6 +1,0 @@
-- name: Delete VMS
-  include_tasks: delete-vm.yml
-  with_items:
-      - "{{ vms }}"
-  loop_control:
-      loop_var: vm
