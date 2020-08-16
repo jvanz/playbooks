@@ -1,0 +1,9 @@
+- name: Register SUSE Enterprise Server
+  become: yes
+  command: "SUSEConnect --regcode {{SLES_REGISTRATION_CODE}}"
+  when: SLES_REGISTRATION_CODE is defined
+
+  #- name: Register SUSE Enterprise Storage
+  #  become: yes
+  #  command: "SUSEConnect --regcode {{SES_REGISTRATION_CODE}}"
+  #  when: "({{SES_REGISTRATION_CODE}} is defined) and ({{SES_REGISTRATION_CODE}}|length > 0)"
