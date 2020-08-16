@@ -1,0 +1,12 @@
+---
+- name: call dbus-uuidgen
+  command: dbus-uuidgen --ensure
+  become: yes
+
+- name: call systemd-machine-id-setup
+  command: systemd-machine-id-setup
+  become: yes
+
+- name: restart systemd-journald
+  command: systemctl restart systemd-journald
+  become: yes

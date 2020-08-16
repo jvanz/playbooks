@@ -1,0 +1,19 @@
+#!/bin/bash
+
+skuba cluster init --control-plane {{groups[load_balancer_group][0]}} my-cluster
+
+echo "Boostraping first master node..."
+skuba node bootstrap --user sles --sudo --target {{groups[master_group][0]}} {{hostvars[groups[master_group][0]]['caasp_host']}}
+
+
+{% for master in groups[master_group][1:] %}
+echo "Adding master node..."
+skuba node join --role master --user sles --sudo --target {{master}} {{hostvars[master]['caasp_host']}}
+sleep 1m
+{% endfor %}
+
+{% for worker in groups[worker_group] %}
+echo "Adding worker node..."
+skuba node join --role worker --user sles --sudo --target {{worker}} {{hostvars[worker]['caasp_host']}}
+sleep 1m
+{% endfor %}

@@ -1,0 +1,10 @@
+---
+- name: Create user groups
+  become: yes
+  group:
+      name: "{{ item.name }}"
+      gid: "{{ item.gid }}"
+      state: present
+  with_items:
+      - "{{ usergroups }}"
+

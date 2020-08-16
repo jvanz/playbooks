@@ -1,0 +1,7 @@
+---
+- name: generate the bootstrap script
+  template:
+    src: bootstrap_caasp_cluster.sh.j2
+    dest: "/tmp/bootstrap.sh"
+    mode: '0644'
+    backup: yes
