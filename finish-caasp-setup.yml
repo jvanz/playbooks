@@ -1,0 +1,22 @@
+---
+- name: restart machine id
+  hosts:  caasp_nodes 
+  tasks:
+      - import_tasks: tasks/recreate-machine-id.yml
+
+- name: Set up load balancer 
+  hosts: caasp_load_balancer
+  become: yes
+  vars_files:
+    - vars/caasp-load-balancer.yml
+  roles:
+    - nginx
+
+- name: generate bootstrap script
+  hosts: localhost
+  vars:
+      master_group: "caasp_master"
+      worker_group: "caasp_worker"
+      load_balancer_group: "caasp_load_balancer"
+  tasks:
+      - import_tasks: tasks/generate_bootstrap_script.yaml
