@@ -4,7 +4,7 @@ stream {
                      '$session_time "$upstream_addr"';
 
     error_log  {{ load_balancer['stream']['error_log'] }};
-    access_log {{ load_balancer['stream']['access_log'] }};
+    access_log {{ load_balancer['stream']['access_log'] }} proxy;
 
     {% for upstream in load_balancer['stream']['servers'] %}
 
