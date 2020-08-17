@@ -1,2 +1,0 @@
-  home: "{{ lookup('env', 'HOME') }}"
-  user: "{{ lookup('env', 'USER') }}"

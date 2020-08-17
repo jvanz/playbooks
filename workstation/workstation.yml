@@ -1,7 +1,0 @@
----
-- name: install the workstation environment
-  hosts: workstation
-  become: no
-  roles:
-    - common
-    - email
