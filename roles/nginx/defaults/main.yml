@@ -3,3 +3,25 @@ DEFAULT_FAIL_TIMEOUT: "5s"
 DEFAULT_WEIGHT: 1
 DEFAULT_PROXY_CONNECT_TIMEOUT: "5s"
 DEFAULT_PROXY_TIMEOUT:  "5s"
+
+load_balancer:
+  stream:
+    name: my-stream
+    access_log: /var/log/nginx/my-stream-lb.access.log
+    error_log: /var/log/nginx/my-stream-lb.error.log
+    servers:
+      - name: servers-name1
+        port: 6443
+        hosts:
+          - host: host1
+          - host: host2
+      - name: servers-name2
+        port: 32000
+        hosts:
+          - host: host1
+          - host: host2
+      - name: servers-name3
+        port: 32001
+        hosts:
+          - host: host1
+          - host: host2
