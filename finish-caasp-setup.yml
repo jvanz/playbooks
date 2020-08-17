@@ -15,8 +15,8 @@
 - name: generate bootstrap script
   hosts: localhost
   vars:
-      master_group: "caasp_master"
-      worker_group: "caasp_worker"
+      master_group: "caasp_masters"
+      worker_group: "caasp_workers"
       load_balancer_group: "caasp_load_balancer"
   tasks:
       - import_tasks: tasks/generate_bootstrap_script.yaml
